@@ -1,0 +1,247 @@
+import time
+
+def verificar_inteiro(num):
+    while True:
+        n = input(num)
+        if n.isnumeric():
+            break
+        else:
+            print('Digite um número válido!')
+    return n
+
+
+def continuar(txt):
+    while True:
+        continua = str(input(txt)).strip().upper()
+        if continua[0] in 'SN':
+            break
+    return continua
+def deposito(txt):
+    try:
+        while True:
+            print('CONTA BANCARIA')
+            print('Realizar depósito')
+            novo_deposito = float(input(txt))
+            if novo_deposito > 0:
+                if usuario_atual in movimentacao_bancaria:
+                    movimentacao_bancaria[usuario_atual].append(novo_deposito)
+                    print(movimentacao_bancaria)
+                if usuario_atual not in movimentacao_bancaria:
+                    depositos = []
+                    depositos.append(novo_deposito)
+                    movimentacao_bancaria[usuario_atual] = depositos
+                    print(movimentacao_bancaria)
+                if True:
+                    #extrato.append(novo_deposito)
+                    print(f'\33[1;34mDepósito realizado com sucesso no valor de R$ {novo_deposito:.2f}.\33[m')
+                    print(f'Saldo atual da conta: R$ {sum(movimentacao_bancaria[usuario_atual]):.2f}')
+                    continua = continuar('Deseja realizar um novo depósito? [S/N] ')
+                    if continua[0] == 'S':
+                        print('------Realizando novo depósito------')
+                    if continua[0] == 'N':
+                        print(f'Depósito finalizado com sucesso! Seu saldo é R$ {sum(movimentacao_bancaria[usuario_atual]):.2f}.')
+                        print('Até logo')
+                        print('-' * 40)
+                        break
+            if novo_deposito <= 0:
+                print(f'ERRO! O depósito de {novo_deposito} não é válido.')
+    except:
+       print('ERRO!!!!!!!!\n')
+
+
+def saque(txt):
+    print('Realizar saque')
+    print(movimentacao_bancaria)
+    print(usuario_atual)
+    if usuario_atual in movimentacao_bancaria:
+        print(f'\33[32mSeu saldo atual é de R$ {sum(movimentacao_bancaria[usuario_atual]):.2f}\33[m')
+        if sum(movimentacao_bancaria[usuario_atual]) > 0:
+            while True:
+                c = 0
+                for n in movimentacao_bancaria[usuario_atual]:
+                    if n < 0:
+                        c += 1
+                if c > 0:
+                    print(f"Você já realizou {c} saque(s) hoje!")
+                else:
+                    print('\33[35mPrimeiro saque de hoje!\33[m')
+                print(len(movimentacao_bancaria[usuario_atual]))
+                if c < 3:
+                    novo_saque = float(input(txt))
+                    if novo_saque > (sum(movimentacao_bancaria[usuario_atual])):
+                        print(f'\33[1;31mSeu saldo é apenas de R$ {sum(movimentacao_bancaria[usuario_atual])}.\33[m')
+                    if sum(movimentacao_bancaria[usuario_atual]) >= novo_saque > 500:
+                        print('\33[1;31mSaque acima de R$ 500,00 não são permitidos.\33[m')
+                    if novo_saque <= sum(movimentacao_bancaria[usuario_atual]) and 0 < novo_saque <= 500:
+                        movimentacao_bancaria[usuario_atual].append(novo_saque*-1)
+                        c = 0
+                        for n in movimentacao_bancaria[usuario_atual]:
+                            if n < 0:
+                                c += 1
+                        print(f'\33[1;31mSaque realizado de R$ {novo_saque:.2f}.\33[m')
+                        print(f'\33[0;30;34mSaldo: R$ {sum(movimentacao_bancaria[usuario_atual]):.2f}\33[m')
+                        if c < 3:
+                            continua = continuar('Deseja realizar um novo saque? [S/N]' )
+                            if continua == 'N':
+                                print('Saque finalizado! Até logo.')
+                                print(f'Saldo da conta: R$ {sum(movimentacao_bancaria[usuario_atual]):.2f}.')
+                                time.sleep(2)
+                                break
+                        else:
+                            print('\33[1;31mRealizado o número máximo de três saques diários.\33[m')
+                            break
+                if c == 3:
+                    print(f'\33[1;31mJá foram realizados {c} saques.\33[m')
+                    print('Finalizado.')
+                    print('-'*40)
+                    break
+    else:
+        print('\33[1;31mVoçê esta sem saldo na conta!\33[m')
+        print('~'*40)
+    time.sleep(2)
+
+def lerextrato():
+    print('\33[4;31;40m  EXTRATO DA CONTA BANCARIA  \33[m')
+    if usuario_atual in movimentacao_bancaria:
+        print(f'Titular: {usuarios[usuario_atual][1][0]}')
+        print(f'Agencia: {usuarios[usuario_atual][0][0]}        Conta: {usuarios[usuario_atual][0][1]}')
+        for o in movimentacao_bancaria[usuario_atual]:
+            if o < 0:
+                print(f'Saque ------ \33[1;31mR$ {o * (-1):.2f}\33[m')
+            if o > 0:
+                print(f'Depósito --- R$ {o:.2f}')
+        print(f'\33[1;32mSaldo ------ R$ {sum(movimentacao_bancaria[usuario_atual]):.2f}\33[m')
+    else:
+        print(f'\33[31m{usuarios[usuario_atual][1][0]} não tem movimentações bancária!\33[m')
+    time.sleep(3)
+
+usuarios = {}
+def criar_usuario():
+    try:
+        while True:
+            print('\n\33[1;30;47m---ABRIR CONTA BANCÁRIA---\33[m')
+            usuario = []
+            endereço = []
+            agencia = "001"
+            conta = len(usuarios)+1
+            dados_bancarios = []
+            dados_bancarios.append(agencia)
+            dados_bancarios.append(conta)
+            usuario.append(input('Nome: '))
+            usuario.append(input('Data de nascimento: '))
+            usuario.append((verificar_inteiro('Digite o CPF: ')))
+            endereço.append(input('Rua: '))
+            endereço.append(input('Bairro: '))
+            endereço.append(input('Cidade: '))
+            endereço.append(input('Estado (sigla): '))
+            usuario.append(endereço)
+            usuarios[usuario[2]] = dados_bancarios, usuario
+
+            continua = continuar('\33[4;33mDeseja realizar um novo cadastro de usuário? [S/N]\33[m ')
+            if continua == 'N':
+                break
+
+    except:
+        print('ERRO!!!!!!!!!!!!!!!!!!!')
+
+
+
+movimentacao_bancaria = {}
+
+def menu_banco():
+    try:
+        while True:
+            print('\n\33[4;35;40m---BANCO PYTHON---\33[m')
+            print('\33[1;30;47m   MENU INICIAL   \33[m\n')
+            tipo_de_entrada = int(input('[1] - Cliente\n'
+                                    '[2] - Funcionário\n'
+                                    '[3] - Sair\n'    
+                                    '\n'
+                                    '\33[4;33mEscolha a opção:\33[m '))
+            if tipo_de_entrada == 1:
+                menu_do_cliente()
+            if tipo_de_entrada == 2:
+                menu_do_funcionario()
+            if tipo_de_entrada == 3:
+                print('Finalizando...')
+                time.sleep(2)
+                break
+    except:
+        print('ERRO!!!!!!!!')
+    finally:
+        print('Ate logo')
+
+
+
+def menu_do_cliente():
+    try:
+        if len(usuarios) > 0:
+            loguim = verificar_inteiro('Digite o CPF do cliente: ')
+            if loguim in usuarios:
+                print(f'Bem vindo {usuarios[loguim][1][0]}')
+                global usuario_atual
+                usuario_atual = loguim
+                while True:
+                    print('~'*40)
+                    print('Bem vindo a sua conta bancária')
+                    print('~'*40)
+                    x = int(input('\33[1;32;40m    Menu    \33[m\n 1-Deposito\n 2-Saque\n 3-extrato\n 4-Sair\n ---> '))
+                    if x == 1:
+                        deposito('Valor do deposito: R$ ')
+                    if x == 2:
+                        saque('Valor do saque: R$ ')
+                    if x == 3:
+                        lerextrato()
+                    if x == 4:
+                        print("Finalizando...")
+                        time.sleep(2)
+                        print('---Até logo---')
+                        break
+            else:
+                print('\33[1;31mUsuário não localizado\33[m')
+        else:
+            print('\33[31mNão existem usuários cadastrados nesse banco!\33[m')
+            print('\33[31mRetorne ao menu do funcionário e cadastre o cliente.\33[m')
+    except:
+        print('ERRRO!!!!!!!!!!!')
+
+
+def ver_clientes():
+    if len(usuarios)>0:
+       print('\n\33[1;30;47m--CADASTRO DE CLIENTES DO BANCO AGENCIA 001--\33[m\n')
+       for c in usuarios:
+           print(f'\33[1;31;40mAgência: {usuarios[c][0][0]} ----- Conta: {usuarios[c][0][1]}\33[m\n')
+           print(f'\33[1mNome: {usuarios[c][1][0]}\33[m\n'
+                 f'CPF: {usuarios[c][1][2]}\n'
+                 f'Data de nascimento: {usuarios[c][1][1]}\n'
+                 f'\33[1;32mRua: {usuarios[c][1][3][0]}\33[m\n'
+                 f'\33[1;32mBairro: {usuarios[c][1][3][1]}\33[m\n'
+                 f'\33[1;32mCidade: {usuarios[c][1][3][2]}\33[m\n'
+                 f'\33[1;32mEstado: {usuarios[c][1][3][3]}\33[m\n')
+           print('-'*30)
+    else:
+       print('\33[1;31mSem usuários cadastrados\33[m\n')
+    input('\33[4;33m--Tecle ENTER para finalizar a visualização--\33[m')
+
+def menu_do_funcionario():
+    try:
+        while True:
+            print('\n\33[1;30;47m---MENU DE ACESSO RESTRITO---\33[m')
+            escolha = int(input('[1] - Cadastrar cliente\n'
+                                '[2] - Visualizar clientes\n'
+                                '[3] - Sair\n'
+                                '\33[4;33mEscolha a opção desejada:\33[m '))
+            if escolha == 1:
+                criar_usuario()
+            if escolha == 2:
+                ver_clientes()
+            if escolha == 3:
+                print('Saindo...\n')
+                time.sleep(2)
+                break
+    except:
+        print('ERRO!!!!!!!')
+
+usuario_atual = 0
+menu_banco()
+
